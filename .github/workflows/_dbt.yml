@@ -1,0 +1,60 @@
+
+
+name: dbt (reusable)
+
+
+on:
+  # It means this workflow is not triggered directly by a PR, push, etc. instead, ci workflow calls it.
+  workflow_call:
+    inputs:
+      # The ci.yml only passes: dbt-target: ci while the rest uses the default value
+      dbt-target:
+        description: dbt target to run against (ci, production)
+        required: true
+        type: string
+      full-run:
+        description: Build the whole project (daily run) instead of only modified models
+        required: false
+        type: boolean
+        default: false
+      dbt-args:
+        description: Extra args passed to dbt build on a full run
+        required: false
+        type: string
+        default: ''
+
+# This create an env variable and sets it to the GitHub user who triggered the workflow.
+# just an environment variable that the dbt process can use.
+env:
+  GITHUB_USERNAME: ${{ github.actor }}
+
+jobs:
+  # GitHub creates an Ubuntu machine and runs this job called: build-databricks
+  build-databricks:
+    runs-on: ubuntu-24.04
+
+    # this Set environment variables and secrets to prepare the environment for dbt.
+    # They are used to authenticate to Databricks. (to be stored securely in GitHub Secrets.)
+    env:
+      DBT_TARGET: ${{ inputs.dbt-target }}
+      DBX_ID_APPLICATION_ID: ${{ secrets.DBX_ID_APPLICATION_ID }}
+      DBX_SECRET: ${{ secrets.DBX_SECRET }}
+    steps:
+      # This downloads the repo so the workflow can access everything in the repo.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # it setup uv work inside your cdc_marketing project so the environment is ready to run dbt.
+      - name: Activate uv
+        uses: ./.github/actions/setup_uv
+        with:
+          working-directory: cdc_marketing
+
+      # Finally, run your dbt CI/CD action in ./.github/actions/dbt_ci_cd
+      - name: CI/CD
+        uses: ./.github/actions/dbt_ci_cd
+        with:
+          project-dir: cdc_marketing
+          github-token: ${{ github.token }}
+          full-run: ${{ inputs.full-run }}
+          dbt-args: ${{ inputs.dbt-args }}

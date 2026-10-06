@@ -1,0 +1,37 @@
+
+# Push to main → deploy to production.
+# Every day at 10:00 UTC → run a production job.
+# Manually → you can trigger it and optionally provide dbt arguments.
+
+
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - production
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+    inputs:
+      dbt-args:
+        description: 'Args to pass to the dbt pipeline'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/_dbt.yml
+    secrets: inherit
+    with:
+      dbt-target: production
+      full-run: ${{ github.event_name != 'push' }}
+      dbt-args: ${{ github.event.inputs.dbt-args || '' }}

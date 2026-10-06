@@ -1,0 +1,61 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    # CI runs when a Pull Request is created(opened), new commits are pushed to the PR(sync), or a previously closed PR is opened again(reopened)
+    types: [opened, synchronize, reopened]
+
+permissions:
+  # This deliberately not giving the workflow permission to modify your repository.
+  contents: read
+  actions: read
+
+concurrency:
+  # This prevents unnecessary CI runs, which cancels the older CI run and run the latest one.
+  group: ci-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    # creates a temporary Ubuntu machine and runs the linting process there.
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        # This downloads the repository so the CI can work with your code.
+        uses: actions/checkout@v4
+        with:
+          # Get the full Git history, rather than only the latest commit because its comparing the changes against main.
+          fetch-depth: 0
+
+
+      - name: Activate uv
+        # This uses the reusable GitHub Action in .github/actions/setup_uv
+        uses: ./.github/actions/setup_uv
+        # Its job is to prepare the uv environment for the cdc_marketing project.
+        # So after this step, the CI is ready to run things such as: uv run ...
+        with:
+          working-directory: cdc_marketing
+
+      - name: Check SQL linting
+        # run from repo root so diff-quality's git paths resolve; sqlfluff picks up cdc_marketing/.sqlfluff
+
+       
+        # It checks the SQL changes in the PR using SQLFluff.
+        # The important part is: --compare-branch=origin/main
+        # It basically asks: What SQL did this PR change compared with main?
+        run: |
+          uv run --project cdc_marketing diff-quality \
+            --violations sqlfluff \
+            --compare-branch=origin/main \
+            --fail-under=100
+
+  # This dbt CI build job only runs if lint succeeds.
+  build:
+    needs: lint
+    # It calling a reusable workflow: ./.github/workflows/_dbt.yml instead of writing all the dbt commands here
+    uses: ./.github/workflows/_dbt.yml
+    # This allows the reusable workflow to access the secrets available to this workflow.
+    secrets: inherit
+    # This tells _dbt.yml to run dbt using the ci target/environment.
+    with:
+      dbt-target: ci

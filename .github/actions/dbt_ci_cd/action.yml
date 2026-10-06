@@ -1,0 +1,189 @@
+
+
+
+
+
+name: DBT CI/CD
+description: Reusable dbt CI/CD job
+
+inputs:
+  project-dir:
+    description: Directory containing dbt
+    required: true
+
+  manifest-artifact-name:
+    description: Name of the GitHub artifact holding the production manifest.json
+    required: false
+    default: dbt-prod-manifest
+
+  github-token:
+    description: Token used to look up and download artifacts from previous runs
+    required: true
+
+  full-run:
+    description: Build the whole project (daily run) instead of only modified models
+    required: false
+    default: 'false'
+
+  dbt-args:
+    description: Extra args passed to dbt build on a full run
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    # Get the production manifest and If there is no production manifest, build --full-refresh
+    - name: Get dbt prod manifest.json
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        mkdir -p target_prod
+        # Latest non-expired production manifest uploaded from main
+        RUN_ID=$(gh api \
+          "repos/${{ github.repository }}/actions/artifacts?name=${{ inputs.manifest-artifact-name }}&per_page=20" \
+          --jq '[.artifacts[] | select(.expired == false and .workflow_run.head_branch == "production")][0].workflow_run.id // empty')
+
+        if [[ -n "$RUN_ID" ]]; then
+          gh run download "$RUN_ID" \
+            --repo ${{ github.repository }} \
+            --name ${{ inputs.manifest-artifact-name }} \
+            --dir target_prod
+          echo "HAS_PROD_STATE=true" >> $GITHUB_ENV
+        else
+          echo "::warning::No production manifest found, building the full project without state comparison."
+          echo "HAS_PROD_STATE=false" >> $GITHUB_ENV
+        fi
+
+    - name: Export $DEV_SCHEMA
+      # set the schema where this PR's dbt models will be built eith development/prod
+      uses: ./.github/actions/export_dev_schema
+
+    - name: Setup dbt
+      # Checks that the dbt setup and connection are working and Installs the packages listed in your packages.yml.
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      # since full-run=false, compile and check source freshness dont run
+      run: |
+        uv run dbt debug
+        uv run dbt deps
+        if [[ "${{ inputs.full-run }}" == "true" ]]; then
+          uv run dbt compile
+          uv run dbt source freshness
+        fi
+
+    - name: Delete dev schema
+      # deleting it prevents old data/models from a previous CI run from affecting the current run.
+      if: env.DBT_TARGET == 'ci'
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      run: |
+        # the drop of dev schema needs to be done on PRs to be sure that models run freshly on each run
+        uv run dbt run-operation \
+          drop_schemas \
+          --args "{dry_run: False, schema_startswith: $DEV_SCHEMA}"
+
+    - name: Run project evaluator
+      # This only runs when DBT_TARGET = ci AND production manifest exists
+      # this is basically an additional quality check for the dbt project itself.
+      if: env.DBT_TARGET == 'ci' && env.HAS_PROD_STATE == 'true'
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      env:
+        ENABLE_DBT_PROJECT_EVALUATOR: true
+      run: |
+        if [ $(uv run dbt ls \
+              --select state:modified \
+              --exclude dbt_project_evaluator \
+              --state target_prod \
+              --output json \
+              --log-level error 2>/dev/null | { jq -c . || echo "[]" ; } | wc -l) -gt 0 ]; then
+          echo "Objects have been modified."
+          uv run dbt seed --select dbt_project_evaluator_exceptions
+          uv run dbt build --select "dbt_project_evaluator"
+        else
+          echo "No modifid objects found not running evaluator."
+        fi
+
+
+    - name: Limit 0 dbt
+      if: env.DBT_TARGET == 'ci' && env.HAS_PROD_STATE == 'true'
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      # It's essentially checking the models without actually processing the data normally.
+      run: |
+        uv run dbt seed \
+          --select state:modified \
+          --state target_prod
+        uv run dbt run \
+          --select state:modified+1 \
+          --defer \
+          --state target_prod \
+          --empty
+
+    - name: Build all dbt
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      env:
+        DBT_ARGS: ${{ inputs.dbt-args }}
+      # if full-run == true: Everything is built according to the supplied arguments.
+      # if No production manifest: build full refresh
+      # in normal PR ci, it only rebuild the changed part
+      # and also stop/fail as soon as possible If something fails
+      run: |
+        if [[ "${{ inputs.full-run }}" == "true" ]]; then
+          uv run dbt build $DBT_ARGS
+        elif [[ "$HAS_PROD_STATE" != "true" ]]; then
+          uv run dbt build --full-refresh
+        elif [[ "$DBT_TARGET" == "ci" ]]; then
+          uv run dbt build  \
+            --select state:modified+1 \
+            --defer \
+            --state target_prod \
+            --indirect-selection=buildable \
+            --fail-fast
+        else
+          uv run dbt build  \
+            --select state:modified+ \
+            --defer \
+            --state target_prod \
+            --full-refresh
+        fi
+
+    - name: Generate dbt docs
+      # this creates the dbt documentation site when target is dev or prod
+      if: env.DBT_TARGET == 'production'
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      run: |
+        uv run dbt docs generate --static
+
+    - name: Upload prod manifest.json
+      # this uploads manifest.json as a GitHub artifact: dbt-prod-manifest only in prod env
+      if: env.DBT_TARGET == 'production'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.manifest-artifact-name }}
+        path: ${{ inputs.project-dir }}/target/manifest.json
+        retention-days: 90
+        if-no-files-found: error
+
+    - name: Upload dbt docs
+      # this uploads: static_index.html as a GitHub artifact only in dev and prod env
+      if: env.DBT_TARGET == 'production'
+      uses: actions/upload-artifact@v4
+      with:
+        name: dbt-docs-${{ env.DBT_TARGET }}
+        path: ${{ inputs.project-dir }}/target/static_index.html
+        retention-days: 90
+
+    - name: Run elementary
+      # this means Elementary runs for only production
+      if: always() && env.DBT_TARGET == 'production'
+      uses: ./.github/actions/elementary
+      with:
+        project-dir: ${{ inputs.project-dir }}
+        profile-target: ${{ env.DBT_TARGET }}
+        elementary-env: prod

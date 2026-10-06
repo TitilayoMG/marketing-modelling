@@ -1,0 +1,30 @@
+
+
+
+
+
+
+# name: Deploy to Staging
+
+# on:
+#   pull_request:
+#     types:
+#       - labeled
+#     branches:
+#       - production
+
+# permissions:
+#   contents: read
+#   actions: read
+
+# concurrency:
+#   group: deploy-staging-${{ github.event.pull_request.number }}
+#   cancel-in-progress: true
+
+# jobs:
+#   deploy:
+#     if: github.event.label.name == 'deploy-to-staging'
+#     uses: ./.github/workflows/_dbt.yml
+#     secrets: inherit
+#     with:
+#       dbt-target: development

@@ -1,0 +1,19 @@
+
+# creates a unique database schema name for the PR and saves it as DEV_SCHEMA.
+# replaces /, -, and . with _
+# so if the branch is feature/add-customers, it convert to 'pr_feature_add_customers' schema name 
+
+
+name: Export dev schema
+description: Export dev schema name to github environment
+runs:
+  using: "composite"
+  steps:
+    - name: Setup dev schema
+      shell: bash
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            DEV_BRANCH=${{ github.head_ref }}
+            pr_schema="pr_${DEV_BRANCH//["/". "-". "."]/"_"}"
+            echo "DEV_SCHEMA="${pr_schema^^}"" >> $GITHUB_ENV
+        fi
