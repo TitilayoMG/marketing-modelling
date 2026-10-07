@@ -15,7 +15,7 @@ env:
 
 jobs:
   clean-up-ci-schema-databricks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       DBT_TARGET: ci
       DBX_ID_APPLICATION_ID: ${{ secrets.DBX_ID_APPLICATION_ID }}

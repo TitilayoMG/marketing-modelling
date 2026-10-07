@@ -1,0 +1,41 @@
+
+cdc_marketing:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+
+  meta:
+    base: &base
+      type: databricks
+      threads: 8
+    base_auth: &base_auth
+      type: databricks
+      auth_type: oauth
+      client_id: "{{ env_var('DBX_ID_APPLICATION_ID') }}"
+      client_secret: "{{ env_var('DBX_SECRET') }}"
+      threads: 8
+      connect_retries: 3
+      retry_all: true
+
+  outputs:
+    ci: &ci_service_account
+      <<: *base_auth
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      catalog: "{{ env_var('CI_CATALOG') }}"
+      schema: "{{ env_var('DEV_SCHEMA') }}"
+      http_path: "{{ env_var('CI_HTTP_PATH') }}"
+
+    production: &production_service_account
+      <<: *base_auth
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      catalog: "{{ env_var('PROD_CATALOG') }}"
+      schema: "{{ env_var('PROD_SCHEMA') }}"
+      http_path: "{{ env_var('PROD_HTTP_PATH') }}"
+
+elementary:
+  target: "{{ env_var('DBT_TARGET', 'ci') }}"
+
+  outputs:
+    ci:
+      <<: *ci_service_account
+
+    production:
+      <<: *production_service_account
