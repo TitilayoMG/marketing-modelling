@@ -9,7 +9,7 @@ on:
     inputs:
       # The ci.yml only passes: dbt-target: ci while the rest uses the default value
       dbt-target:
-        description: dbt target to run against (ci, production)
+        description: dbt target to run against (ci, dev, production)
         required: true
         type: string
       full-run:
