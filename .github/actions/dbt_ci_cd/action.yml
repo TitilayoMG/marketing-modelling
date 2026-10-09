@@ -61,6 +61,16 @@ runs:
       # set the schema where this PR's dbt models will be built eith development
       uses: ./.github/actions/export_dev_schema
 
+    - name: Check Databricks variables
+      shell: bash
+      run: |
+        if [ -z "$DATABRICKS_HOST" ]; then
+          echo "DATABRICKS_HOST is EMPTY"
+          exit 1
+        else
+          echo "DATABRICKS_HOST is set"
+        fi
+
     - name: Setup dbt
       # Checks that the dbt setup and connection are working and Installs the packages listed in your packages.yml.
       shell: bash
