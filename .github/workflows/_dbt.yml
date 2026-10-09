@@ -41,12 +41,12 @@ jobs:
       DBX_SECRET: ${{ secrets.DBX_SECRET }}
       DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
       HTTP_PATH: ${{ vars.HTTP_PATH }}
-      CI_CATALOG: ${{ vars.DEV_CATALOG }}
-      CI_SCHEMA: ${{ vars.DEV_SCHEMA }}
+      CI_CATALOG: ${{ vars.CI_CATALOG }}
+      CI_SCHEMA: ${{ vars.CI_SCHEMA }}
       DEV_CATALOG: ${{ vars.DEV_CATALOG }}
       DEV_SCHEMA: ${{ vars.DEV_SCHEMA }}
-      PROD_CATALOG: ${{ vars.DEV_CATALOG }}
-      PROD_SCHEMA: ${{ vars.DEV_SCHEMA }}
+      PROD_CATALOG: ${{ vars.PROD_CATALOG }}
+      PROD_SCHEMA: ${{ vars.PROD_SCHEMA }}
 
     steps:
       # This downloads the repo so the workflow can access everything in the repo.
