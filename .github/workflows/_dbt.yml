@@ -44,7 +44,6 @@ jobs:
       CI_CATALOG: ${{ vars.CI_CATALOG }}
       CI_SCHEMA: ${{ vars.CI_SCHEMA }}
       DEV_CATALOG: ${{ vars.DEV_CATALOG }}
-      DEV_SCHEMA: ${{ vars.DEV_SCHEMA }}
       PROD_CATALOG: ${{ vars.PROD_CATALOG }}
       PROD_SCHEMA: ${{ vars.PROD_SCHEMA }}
 
