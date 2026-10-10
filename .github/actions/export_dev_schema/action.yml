@@ -11,12 +11,12 @@
 #   steps:
 #     - name: Setup dev schema
 #       shell: bash
-#       run: |
-#         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-#             DEV_BRANCH=${{ github.head_ref }}
-#             pr_schema="pr_${DEV_BRANCH//["/". "-". "."]/"_"}"
-#             echo "DEV_SCHEMA="${pr_schema^^}"" >> $GITHUB_ENV
-#         fi
+      # run: |
+      #   if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+      #       DEV_BRANCH=${{ github.head_ref }}
+      #       pr_schema="pr_${DEV_BRANCH//["/". "-". "."]/"_"}"
+      #       echo "DEV_SCHEMA="${pr_schema^^}"" >> $GITHUB_ENV
+      #   fi
 
 name: Export development schema
 description: Export development schema name to GitHub environment
@@ -27,6 +27,7 @@ runs:
     - name: Setup development schema
       shell: bash
       run: |
-        DEV_BRANCH="${{ github.ref_name }}"
-        dev_schema="${DEV_BRANCH//["/". "-". "."]/"_"}"
-        echo "DEV_SCHEMA=${dev_schema^^}" >> "$GITHUB_ENV"
+        DEV_BRANCH=${{ github.head_ref }}
+        pr_schema="pr_${DEV_BRANCH//["/". "-". "."]/"_"}"
+        echo "DEV_SCHEMA="${pr_schema^^}"" >> $GITHUB_ENV
+  
