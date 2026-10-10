@@ -5,7 +5,7 @@
     {# only create custom schemas in production #}
 
     {%- set default_schema = target.schema -%}
-    {%- if custom_schema_name is none or target.name not in ['production', 'staging'] -%}
+    {%- if custom_schema_name is none or target.name not in ['production', 'dev'] -%}
 
         {{ default_schema }}
 

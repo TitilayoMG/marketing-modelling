@@ -21,7 +21,7 @@ cdc_marketing:
     ci: &ci_service_account
       <<: *base_auth
       catalog: "{{ env_var('CI_CATALOG') }}"
-      schema: "{{ env_var('CI_SCHEMA') }}"
+      schema: "{{ env_var('DEV_SCHEMA') }}"
 
     dev: &dev_service_account
       <<: *base_auth
