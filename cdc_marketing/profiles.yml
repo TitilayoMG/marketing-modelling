@@ -26,7 +26,7 @@ cdc_marketing:
     dev: &dev_service_account
       <<: *base_auth
       catalog: "{{ env_var('DEV_CATALOG') }}"
-      schema: "{{ env_var('DEV_SCHEMA') }}"
+      schema: "{{ env_var('DEVELOPMENT_SCHEMA') }}"
 
     production: &production_service_account
       <<: *base_auth
@@ -40,6 +40,10 @@ elementary:
   outputs:
     dev:
       <<: *dev_service_account
+      catalog: "{{ env_var('ELM_DEV_CATALOG') }}"
+      schema: "{{ env_var('ELM_DEV_SCHEMA') }}"
 
     production:
       <<: *production_service_account
+      catalog: "{{ env_var('ELM_PROD_CATALOG') }}"
+      schema: "{{ env_var('ELM_PROD_SCHEMA') }}"
