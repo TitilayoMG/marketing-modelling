@@ -22,6 +22,7 @@ jobs:
       DBX_SECRET: ${{ secrets.DBX_SECRET }}
       DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
       HTTP_PATH: ${{ vars.HTTP_PATH }}
+      CI_CATALOG: ${{ vars.CI_CATALOG }}
 
     steps:
       - name: Checkout code
