@@ -15,11 +15,14 @@ env:
 
 jobs:
   clean-up-ci-schema-databricks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       DBT_TARGET: ci
       DBX_ID_APPLICATION_ID: ${{ secrets.DBX_ID_APPLICATION_ID }}
       DBX_SECRET: ${{ secrets.DBX_SECRET }}
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      HTTP_PATH: ${{ vars.HTTP_PATH }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

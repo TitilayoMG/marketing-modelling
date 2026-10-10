@@ -1,0 +1,30 @@
+
+
+
+
+
+
+name: Deploy to Development
+
+on:
+  push:
+    # types:
+    #   - labeled
+    branches:
+      - development
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: deploy-development
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # if: github.event.label.name == 'deploy-to-development'
+    uses: ./.github/workflows/_dbt.yml
+    secrets: inherit
+    with:
+      dbt-target: dev
