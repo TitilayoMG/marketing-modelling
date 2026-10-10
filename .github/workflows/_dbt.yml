@@ -46,6 +46,12 @@ jobs:
       DEV_CATALOG: ${{ vars.DEV_CATALOG }}
       PROD_CATALOG: ${{ vars.PROD_CATALOG }}
       PROD_SCHEMA: ${{ vars.PROD_SCHEMA }}
+      DEVELOPMENT_SCHEMA: ${{ vars.DEVELOPMENT_SCHEMA }}
+      ELM_DEV_CATALOG: ${{ vars.ELM_DEV_CATALOG }}
+      ELM_DEV_SCHEMA: ${{ vars.ELM_DEV_SCHEMA }}
+      ELM_PROD_CATALOG: ${{ vars.ELM_PROD_CATALOG }}
+      ELM_PROD_SCHEMA: ${{ vars.ELM_PROD_SCHEMA }}
+
 
     steps:
       # This downloads the repo so the workflow can access everything in the repo.
