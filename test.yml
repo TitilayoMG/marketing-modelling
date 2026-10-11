@@ -1,27 +1,24 @@
-runs:
-  using: "composite"
-  steps:
-    - name: Deploy Elementary tables
-      shell: bash
-      working-directory: ${{ inputs.project-dir }}
-      run: |
+
+run: |
         uv run dbt run --select elementary --target ${{ inputs.profile-target }}
 
-    - name: Generate elementary report
-      shell: bash
-      working-directory: ${{ inputs.project-dir }}
-      run: |
-        uv run edr report \
-          --days-back 90 \
-          --profiles-dir . \
-          --profile-target ${{ inputs.profile-target }} \
-          --open-browser false \
-          --env ${{ inputs.elementary-env }}
 
-    - name: Upload elementary report
-      uses: actions/upload-artifact@v4
-      with:
-        name: elementary-report-${{ inputs.profile-target }}
-        path: ${{ inputs.project-dir }}/edr_target/elementary_report.html
-        retention-days: ${{ inputs.retention-days }}
-        if-no-files-found: error
+
+```yaml
+- name: Deploy Elementary tables
+  shell: bash
+  working-directory: ${{ inputs.project-dir }}
+  run: |
+    set -euxo pipefail
+
+    echo "=== Verify dbt target ==="
+    uv run dbt debug --target "${{ inputs.profile-target }}"
+
+    echo "=== List selected Elementary models ==="
+    uv run dbt ls --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}"
+
+    echo "=== Deploy Elementary models ==="
+    uv run dbt run --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" --debug
+
+    echo "=== Deployment complete ==="
+```
