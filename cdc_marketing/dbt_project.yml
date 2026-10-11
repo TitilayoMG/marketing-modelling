@@ -38,4 +38,8 @@ models:
     +enabled: false
 
   elementary:
-    +enabled: false
+    +meta:
+      owner: "external_package"
+    +catalog: "{{ 'silver_production' if (target.name == 'production') else 'silver_dev' if (target.name == 'dev') else target.catalog }}"
+    +schema: "elementary"
+    +enabled: "{{ target.name in ['production', 'dev'] | as_bool }}"

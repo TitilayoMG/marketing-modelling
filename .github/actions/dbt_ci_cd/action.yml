@@ -190,7 +190,7 @@ runs:
         retention-days: 90
 
     - name: Run elementary
-      # this means Elementary runs for only production
+      # this means Elementary runs for dev and production
       if: always() && (env.DBT_TARGET == 'production' || env.DBT_TARGET == 'dev')
       uses: ./.github/actions/elementary
       with:
