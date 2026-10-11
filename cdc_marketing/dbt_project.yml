@@ -40,6 +40,6 @@ models:
   elementary:
     +meta:
       owner: "external_package"
-    +catalog: "{{ 'silver_production' if (target.name == 'production') else 'silver_dev' if (target.name == 'dev') else target.catalog }}"
+    +database: "{{ env_var('ELM_PROD_CATALOG') if target.name == 'production' else env_var('ELM_DEV_CATALOG') if target.name == 'dev' else target.catalog }}"
     +schema: "elementary"
     +enabled: "{{ target.name in ['production', 'dev'] | as_bool }}"

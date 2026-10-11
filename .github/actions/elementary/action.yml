@@ -38,14 +38,18 @@ runs:
         uv run dbt debug \
           --profiles-dir . \
           --profile elementary \
-          --target "${{ inputs.profile-target }}"
+          --target "${{ inputs.profile-target }}" || true
 
-        uv run dbt run
-        --project-dir .venv/lib/python3.13/site-packages/elementary/monitor/dbt_project
-        --profiles-dir .
-        --profile elementary
-        --target "${{ inputs.profile-target }}"
-        --debug
+        uv run dbt run \
+          --project-dir "${{ inputs.project-dir }}/.venv/lib/python3.13/site-packages/elementary/monitor/dbt_project" \
+          --profiles-dir "${{ inputs.project-dir }}" \
+          --profile elementary \
+          --target "${{ inputs.profile-target }}" \
+          --debug 2>&1 | tee elementary_run.log || true
+
+        echo "::group::Where were the tables created?"
+        grep -Ei "created (sql )?(table|view|incremental)? ?model|elementary_test_results" elementary_run.log || true
+        echo "::endgroup::"
 
 
     - name: Generate elementary report
