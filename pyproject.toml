@@ -1,0 +1,14 @@
+[project]
+name = "cdc_marketing"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "dbt-databricks>=1.12.6",
+    "elementary-data[databricks]~=0.26.0",
+]
+
+[dependency-groups]
+dev = [
+    "diff-cover>=10.6.0",
+    "sqlfluff>=4.4.0",
+]

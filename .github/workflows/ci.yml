@@ -46,7 +46,7 @@ jobs:
         run: |
           uv run --project cdc_marketing diff-quality \
             --violations sqlfluff \
-            --compare-branch=origin/main \
+            --compare-branch=origin/production \
             --fail-under=100
 
   # This dbt CI build job only runs if lint succeeds.
