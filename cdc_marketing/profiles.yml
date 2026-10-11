@@ -36,7 +36,7 @@ cdc_marketing:
 
 
 elementary:
-  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  # target: "{{ env_var('DBT_TARGET', 'dev') }}"
 
   outputs:
     dev:
