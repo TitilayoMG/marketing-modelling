@@ -31,6 +31,12 @@ runs:
   using: "composite"
   steps:
 
+    - name: Deploy Elementary tables
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      run: |
+        uv run dbt run --select elementary --target ${{ inputs.profile-target }}
+
     - name: Generate elementary report
       shell: bash
       working-directory: ${{ inputs.project-dir }}
