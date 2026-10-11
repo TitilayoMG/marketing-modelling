@@ -151,3 +151,14 @@ uv run dbt run \
   grep -Ei "created (sql )?(table|view|incremental)? ?model|elementary_test_results|Runtime data:|Completed successfully|Completed with" elementary_run.log || true
   echo "::endgroup::"
 
+
+
+{%- if custom_database_name is none -%}
+    {{ target.database }}
+{%- elif node is not none and node.package_name == 'elementary' -%}
+    {{ custom_database_name | trim }}
+{%- elif target.name in ['production', 'staging'] -%}
+    {{ custom_database_name | trim }}
+{%- else -%}
+    {{ target.database }}
+{%- endif -%}
