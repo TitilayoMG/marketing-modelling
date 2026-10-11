@@ -1,62 +1,66 @@
-cdc_marketing:
-  target: "{{ env_var('DBT_TARGET', 'dev') }}"
-  
-  meta:
-    base: &base
-      type: databricks
-      threads: 8
-    base_auth: &base_auth
-      type: databricks
-      auth_type: oauth
-      client_id: "{{ env_var('DBX_ID_APPLICATION_ID') }}"
-      client_secret: "{{ env_var('DBX_SECRET') }}"
-      threads: 8
-      connect_retries: 30
-      retry_all: true
 
-  outputs:
-    dev: &dev_service_account
-      <<: *base
-      host: dbc-d8521ad9-6ff1.cloud.databricks.com
-      token: "{{ env_var('DATABRICKS_PAT_TOKEN') }}"
-      catalog: "{{ env_var('DEV_CATALOG') }}"
-      schema: "{{ env_var('DEV_SCHEMA') }}"
-      http_path: /sql/1.0/warehouses/10cc60dfec423f90
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'cdc_marketing'
+version: '1.0.0'
 
-    ci: &ci_service_account
-      <<: *base_auth
-      catalog: ci_development
-      schema: "{{ env_var('DEV_SCHEMA') }}"
-      host: dbc-d8521ad9-6ff1.cloud.databricks.com
-      http_path: /sql/1.0/warehouses/10cc60dfec423f90
+# This setting configures which "profile" dbt uses for this project.
+profile: 'cdc_marketing'
 
-    staging: &staging_service_account
-      <<: *ci_service_account
-      catalog: gold_staging
-      schema: analytics
-      http_path: /sql/1.0/warehouses/10cc60dfec423f90
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
 
-    production: &production_service_account
-      <<: *base_auth
-      catalog: gold_production
-      schema: analytics
-      host: dbc-d8521ad9-6ff1.cloud.databricks.com
-      http_path: /sql/1.0/warehouses/10cc60dfec423f90
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
 
-      
-## DATABRICKS ##
-## By default, edr expects the profile name 'elementary'.      ##
-## Configure the database and schema of elementary models.     ##
-## Check where 'elementary_test_results' is to find it.        ##
 
-elementary:
-  outputs:
-    production:
-      <<: *production_service_account
-      catalog: silver_production
-      schema: elementary
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
 
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+models:
+  cdc_marketing:
+    # Config indicated by + and applies to all files under models/example/
     staging:
-      <<: *staging_service_account
-      catalog: silver_staging
-      schema: elementary
+      +catalog: "{{ 'silver_production' if (target.name == 'production') else 'silver_staging' if (target.name == 'staging') else target.catalog }}"
+      +schema: staging
+
+    intermediate:
+      +materialized: table
+      +catalog: "{{ 'silver_production' if (target.name == 'production') else 'silver_staging' if (target.name == 'staging') else target.catalog }}"
+      +schema: preparation
+
+    marts:
+      +materialized: table
+      +catalog: "{{ 'gold_production' if (target.name == 'production') else 'gold_staging' if (target.name == 'staging') else target.catalog }}"
+      +schema: marketing_spend
+
+  # Elementary package models -> "elementary" schema in every environment.
+  elementary:
+    +meta:
+      owner: "external_package"
+    +catalog: "{{ 'silver_production' if (target.name == 'production') else 'silver_staging' if (target.name == 'staging') else target.catalog }}"
+    +schema: "elementary"
+    +enabled: "{{ target.name in ['production', 'staging'] | as_bool }}"
+
+  dbt_project_evaluator:
+    +meta:
+      owner: "external_package"
+    +schema: _evaluator
+    # disable by default unless specifically enabled and prevent from running on production
+    +enabled: "{{ (target.name not in ['production', 'staging'] | as_bool) and (env_var('ENABLE_DBT_PROJECT_EVALUATOR', 'false') | lower == 'true' | as_bool)  }}"
+
+data_tests:
+  dbt_project_evaluator:
+    +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'error') }}"
