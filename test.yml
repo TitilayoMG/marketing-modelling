@@ -22,3 +22,52 @@ run: |
 
     echo "=== Deployment complete ==="
 ```
+
+- name: Deploy Elementary tables
+      shell: bash
+      working-directory: ${{ inputs.project-dir }}
+      run: |
+        echo "=== Verify dbt target ==="
+        uv run dbt debug --target "${{ inputs.profile-target }}" || true
+
+        echo "=== List Elementary model ==="
+        uv run dbt ls --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" || true
+
+        echo "=== Deploy Elementary model ==="
+        uv run dbt run --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" --debug || true
+
+        echo "=== Deployment diagnostics complete ==="
+
+* name: Deploy Elementary tables
+  shell: bash
+  working-directory: ${{ inputs.project-dir }}
+  run: |
+  uv run dbt run 
+  --project-dir .
+  --profiles-dir . 
+  --profile elementary 
+  --target "${{ inputs.profile-target }}" 
+  --debug
+
+
+
+
+
+
+
+
+* name: Deploy Elementary tables
+  shell: bash
+  working-directory: ${{ inputs.project-dir }}
+  run: |
+  uv run dbt debug 
+  --profiles-dir . 
+  --profile elementary 
+  --target "${{ inputs.profile-target }}"
+
+  uv run dbt run 
+  --project-dir .venv/lib/python3.13/site-packages/elementary/monitor/dbt_project 
+  --profiles-dir . 
+  --profile elementary 
+  --target "${{ inputs.profile-target }}" 
+  --debug
