@@ -35,7 +35,16 @@ runs:
       shell: bash
       working-directory: ${{ inputs.project-dir }}
       run: |
-        uv run dbt run --select elementary --target ${{ inputs.profile-target }}
+        echo "=== Verify dbt target ==="
+        uv run dbt debug --target "${{ inputs.profile-target }}" || true
+
+        echo "=== List Elementary model ==="
+        uv run dbt ls --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" || true
+
+        echo "=== Deploy Elementary model ==="
+        uv run dbt run --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" --debug || true
+
+        echo "=== Deployment diagnostics complete ==="
 
     - name: Generate elementary report
       shell: bash
