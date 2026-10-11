@@ -6,7 +6,7 @@
     {# only create custom catalog in production #}
 
     {%- set default_database = target.database -%}
-    {%- if custom_database_name is none or target.name not in ['production', 'staging'] -%}
+    {%- if custom_database_name is none or target.name not in ['production', 'dev'] -%}
 
         {{ default_database }}
 

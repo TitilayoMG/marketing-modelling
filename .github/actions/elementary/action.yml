@@ -41,7 +41,7 @@ runs:
           --target "${{ inputs.profile-target }}" || true
 
         uv run dbt run \
-          --project-dir "${{ inputs.project-dir }}/.venv/lib/python3.13/site-packages/elementary/monitor/dbt_project" \
+          --project-dir .venv/lib/python3.13/site-packages/elementary/monitor/dbt_project \
           --profiles-dir "${{ inputs.project-dir }}" \
           --profile elementary \
           --target "${{ inputs.profile-target }}" \
