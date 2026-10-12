@@ -1,0 +1,43 @@
+
+
+
+{{
+    config(
+        event_time='ad_date',
+    )
+}}
+
+/*
+    Tables
+*/
+
+WITH source_data AS (
+
+    SELECT * FROM {{ source('snapchat', 'ads_stats') }}
+
+),
+
+/*
+    Transformations
+    ad_currency_code and data_src are redundant (EUR and snapchat_ads)
+*/
+
+formatted AS (
+
+    SELECT
+        -- FK
+        CAST(ad_detail_id AS STRING) AS ad_id,
+
+        -- Measures
+        CAST(ad_spend AS DOUBLE) AS ad_spend,
+        TRY_CAST(ad_impressions AS INTEGER) AS ad_impressions,
+        TRY_CAST(ad_clicks AS INTEGER) AS ad_clicks,
+        CAST(ad_country AS STRING) AS ad_country,
+        
+        -- Metadata
+        CAST(ad_date AS DATE) AS ad_date
+    FROM
+        source_data
+)
+
+SELECT * FROM formatted

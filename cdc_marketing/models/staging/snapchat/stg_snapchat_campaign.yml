@@ -1,0 +1,17 @@
+
+
+
+version: 2
+models:
+  - name: stg_snapchat_campaign
+    description: snapchat campaign history
+    # data_tests:
+    #   - dbt_utils.unique_combination_of_columns:
+    #       combination_of_columns:
+    #         - campaign_id
+    #         - campaign_updated_at
+    columns:
+      - name: campaign_id
+        data_tests:
+          - not_null
+          - unique

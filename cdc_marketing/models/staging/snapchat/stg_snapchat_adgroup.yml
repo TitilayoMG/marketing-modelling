@@ -1,0 +1,14 @@
+
+
+
+
+
+version: 2
+models:
+  - name: stg_snapchat_adgroup
+    description: snapchat ad group/set history
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ad_group_id
+            - ad_group_updated_at

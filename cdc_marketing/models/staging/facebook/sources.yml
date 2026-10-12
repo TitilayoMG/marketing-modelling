@@ -1,0 +1,51 @@
+
+
+sources:
+  - name: facebook
+    database: raw
+    description: data from  facebook plaform (static)
+    schema: cde
+    config:
+      enabled: true
+      meta:
+        owner: "@cde_engineer"
+      freshness:
+        warn_after:
+          count: 2
+          period: day
+
+    tables:
+      - name: facebook_campaign
+        description: campaign data from  facebook plaform (static)
+        identifier: new_campaign_de_randomized
+        config:
+          enabled: true
+          event_time: campaign_updated_at
+
+      - name: facebook_adgroup
+        description: adgroups data from  facebook plaform (static)
+        identifier: new_adgroup_de_randomized
+        config:
+          enabled: true
+          event_time: ad_group_updated_at
+
+      - name: facebook_ads
+        description: ads data from  facebook plaform (static)
+        identifier: new_ads_de_randomized
+        config:
+          enabled: true
+          event_time: ad_updated_at
+
+      - name: facebook_account
+        description: accounts data from  facebook plaform (static)
+        identifier: new_acccount_de_randomized
+        config:
+          enabled: true
+          event_time: account_updated_at
+
+      - name: facebook_ads_stats
+        description: ads stats on spend, clicks and impression data from  facebook plaform (static)
+        identifier: ads_stats
+        config:
+          enabled: true
+          event_time: ad_date
