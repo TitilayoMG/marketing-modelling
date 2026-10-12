@@ -11,6 +11,7 @@ models:
           combination_of_columns:
             - ad_date
             - ad_id
+            - ad_country
     columns:
       - name: ad_id
         tests:

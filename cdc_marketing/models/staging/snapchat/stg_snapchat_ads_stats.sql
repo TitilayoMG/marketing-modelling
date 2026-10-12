@@ -32,7 +32,8 @@ formatted AS (
         CAST(ad_country AS STRING) AS ad_country,
 
         -- Metadata
-        CAST(ad_date AS DATE) AS ad_date
+        CAST(ad_date AS DATE) AS ad_date,
+        CAST(data_src AS STRING) AS data_src
     FROM
         source_data
 )
