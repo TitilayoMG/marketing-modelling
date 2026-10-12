@@ -1,13 +1,10 @@
-
-
-
-
 /*
     Tables
 */
 WITH source_data AS (
-    SELECT * FROM {{ source('snapchat', 'ads') }}
+    SELECT * FROM {{ source('snapchat', 'snapchat_ads') }}
 ),
+
 /*
     Transformations
 */
@@ -24,4 +21,5 @@ formatted AS (
     FROM
         source_data
 )
+
 SELECT * FROM formatted

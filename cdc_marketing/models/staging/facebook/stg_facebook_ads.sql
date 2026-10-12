@@ -1,12 +1,10 @@
-
-
-
 /*
     Tables
 */
 WITH source_data AS (
-    SELECT * FROM {{ source('facebook', 'ads') }}
+    SELECT * FROM {{ source('facebook', 'facebook_ads') }}
 ),
+
 /*
     Transformations
 */
@@ -25,4 +23,5 @@ formatted AS (
     FROM
         source_data
 )
+
 SELECT * FROM formatted

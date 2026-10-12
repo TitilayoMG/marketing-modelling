@@ -1,15 +1,10 @@
-
-
-
-
-
-
 /*
     Tables
 */
 WITH source_data AS (
-    SELECT * FROM {{ source('snapchat', 'campaign') }}
+    SELECT * FROM {{ source('snapchat', 'snapchat_campaign') }}
 ),
+
 /*
     Transformations
 */
@@ -24,4 +19,5 @@ formatted AS (
     FROM
         source_data
 )
+
 SELECT * FROM formatted

@@ -1,6 +1,3 @@
-
-
-
 {{
     config(
         event_time='ad_date',
@@ -13,7 +10,7 @@
 
 WITH source_data AS (
 
-    SELECT * FROM {{ source('snapchat', 'ads_stats') }}
+    SELECT * FROM {{ source('snapchat', 'snapchat_ads_stats') }}
 
 ),
 
@@ -33,7 +30,7 @@ formatted AS (
         TRY_CAST(ad_impressions AS INTEGER) AS ad_impressions,
         TRY_CAST(ad_clicks AS INTEGER) AS ad_clicks,
         CAST(ad_country AS STRING) AS ad_country,
-        
+
         -- Metadata
         CAST(ad_date AS DATE) AS ad_date
     FROM

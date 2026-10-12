@@ -1,4 +1,3 @@
-
 {{
     config(
         event_time='ad_date',
@@ -11,7 +10,7 @@
 
 WITH source_data AS (
 
-    SELECT * FROM {{ source('facebook', 'ads_stats') }}
+    SELECT * FROM {{ source('facebook', 'facebook_ads_stats') }}
 
 ),
 

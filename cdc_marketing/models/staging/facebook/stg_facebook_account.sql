@@ -1,12 +1,6 @@
-
-
-
-
-
 WITH source_data AS (
 
-    SELECT * FROM {{ source('facebook', 'account') }}
-
+    SELECT * FROM {{ source('facebook', 'facebook_account') }}
 
 ),
 
