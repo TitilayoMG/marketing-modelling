@@ -1,0 +1,18 @@
+
+
+
+version: 2
+
+models:
+  - name: stg_snapchat_ads_stats
+    description: snapchat daily stats aggregated at the ad level
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ad_date
+            - ad_id
+            - ad_country
+    columns:
+      - name: ad_id
+        tests:
+          - not_null

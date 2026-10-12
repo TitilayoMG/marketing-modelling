@@ -1,164 +1,44 @@
+sources:
+  - name: facebook
+    database: bronze_production
+    description: data from  facebook plaform (static)
+    schema: cdc_staging
+    config:
+      enabled: true
+      meta:
+        owner: "@cde_engineer"
+      freshness:
+        warn_after:
+          count: 2
+          period: day
 
-run: |
-        uv run dbt run --select elementary --target ${{ inputs.profile-target }}
+    tables:
+      - name: campaign
+        description: campaign data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: campaign_updated_at
 
+      - name: adsgroup
+        description: adgroups data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_group_updated_at
 
+      - name: ads
+        description: ads data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_updated_at
 
-```yaml
-- name: Deploy Elementary tables
-  shell: bash
-  working-directory: ${{ inputs.project-dir }}
-  run: |
-    set -euxo pipefail
+      - name: account
+        description: accounts data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: account_updated_at
 
-    echo "=== Verify dbt target ==="
-    uv run dbt debug --target "${{ inputs.profile-target }}"
-
-    echo "=== List selected Elementary models ==="
-    uv run dbt ls --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}"
-
-    echo "=== Deploy Elementary models ==="
-    uv run dbt run --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" --debug
-
-    echo "=== Deployment complete ==="
-```
-
-- name: Deploy Elementary tables
-      shell: bash
-      working-directory: ${{ inputs.project-dir }}
-      run: |
-        echo "=== Verify dbt target ==="
-        uv run dbt debug --target "${{ inputs.profile-target }}" || true
-
-        echo "=== List Elementary model ==="
-        uv run dbt ls --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" || true
-
-        echo "=== Deploy Elementary model ==="
-        uv run dbt run --select elementary.edr.run_results.elementary_test_results --target "${{ inputs.profile-target }}" --debug || true
-
-        echo "=== Deployment diagnostics complete ==="
-
-* name: Deploy Elementary tables
-  shell: bash
-  working-directory: ${{ inputs.project-dir }}
-  run: |
-  uv run dbt run 
-  --project-dir .
-  --profiles-dir . 
-  --profile elementary 
-  --target "${{ inputs.profile-target }}" 
-  --debug
-
-
-
-
-
-
-
-
-* name: Deploy Elementary tables
-  shell: bash
-  working-directory: ${{ inputs.project-dir }}
-  run: |
-  uv run dbt debug 
-  --profiles-dir . 
-  --profile elementary 
-  --target "${{ inputs.profile-target }}"
-
-  uv run dbt run 
-  --project-dir .venv/lib/python3.13/site-packages/elementary/monitor/dbt_project 
-  --profiles-dir . 
-  --profile elementary 
-  --target "${{ inputs.profile-target }}" 
-  --debug
-
-- name: Debug Elementary catalog resolution
-  shell: bash
-  working-directory: ${{ inputs.project-dir }}
-  env:
-    PROFILE_TARGET: ${{ inputs.profile-target }}
-  run: |
-    set -euo pipefail
-
-    echo "::group::Env vars (non-secret)"
-    echo "DBT_TARGET=${DBT_TARGET:-<unset>}"
-    echo "PROFILE_TARGET=$PROFILE_TARGET"
-    echo "DEV_CATALOG=${DEV_CATALOG:-<unset>}"
-    echo "DEVELOPMENT_SCHEMA=${DEVELOPMENT_SCHEMA:-<unset>}"
-    echo "ELM_DEV_CATALOG=${ELM_DEV_CATALOG:-<unset>}"
-    echo "ELM_DEV_SCHEMA=${ELM_DEV_SCHEMA:-<unset>}"
-    echo "ELM_PROD_CATALOG=${ELM_PROD_CATALOG:-<unset>}"
-    echo "ELM_PROD_SCHEMA=${ELM_PROD_SCHEMA:-<unset>}"
-    echo "::endgroup::"
-
-    echo "::group::Main project profile (where your models build)"
-    uv run dbt debug --profiles-dir . --target "$PROFILE_TARGET"
-    echo "::endgroup::"
-
-    echo "::group::Elementary profile (where edr reads)"
-    uv run dbt debug --profiles-dir . --profile elementary --target "$PROFILE_TARGET"
-    echo "::endgroup::"
-
-    ELM_PROJECT_DIR="$(uv run python -c 'import elementary, pathlib; print(pathlib.Path(elementary.__file__).parent / "monitor" / "dbt_project")')"
-    echo "Elementary dbt project: $ELM_PROJECT_DIR"
-
-    echo "::group::Deploy Elementary tables"
-    uv run dbt run \
-      --project-dir "$ELM_PROJECT_DIR" \
-      --profiles-dir "$PWD" \
-      --profile elementary \
-      --target "$PROFILE_TARGET" \
-      --debug 2>&1 | tee elementary_run.log
-    echo "::endgroup::"
-
-    echo "::group::Where were the tables created?"
-    grep -Ei "created (sql )?(table|view|incremental)? ?model|elementary_test_results" elementary_run.log || true
-    echo "::endgroup::"
-
-
-uv run dbt run 
---project-dir "${{ inputs.project-dir }}/.venv/lib/python3.13/site-packages/elementary/monitor/dbt_project" 
---profiles-dir "${{ inputs.project-dir }}" 
---profile elementary 
---target "${{ inputs.profile-target }}" 
---debug
-
-uv run dbt run \
-          --project-dir "${{ inputs.project-dir }}" \
-          --profiles-dir . \
-          --profile elementary \
-          --target "${{ inputs.profile-target }}" \
-          --debug 
-
-
-* name: Deploy Elementary tables
-  shell: bash
-  working-directory: ${{ inputs.project-dir }}
-  run: |
-  uv run dbt debug 
-  --profiles-dir . 
-  --profile elementary 
-  --target "${{ inputs.profile-target }}" || true
-
-  uv run dbt run 
-  --project-dir "${{ inputs.project-dir }}/.venv/lib/python3.13/site-packages/elementary/monitor/dbt_project" 
-  --profiles-dir "${{ inputs.project-dir }}" 
-  --profile elementary 
-  --target "${{ inputs.profile-target }}" 
-  --debug 2>&1 | tee elementary_run.log || true
-
-  echo "::group::Where were the tables created?"
-  grep -Ei "created (sql )?(table|view|incremental)? ?model|elementary_test_results|Runtime data:|Completed successfully|Completed with" elementary_run.log || true
-  echo "::endgroup::"
-
-
-
-{%- if custom_database_name is none -%}
-    {{ target.database }}
-{%- elif node is not none and node.package_name == 'elementary' -%}
-    {{ custom_database_name | trim }}
-{%- elif target.name in ['production', 'staging'] -%}
-    {{ custom_database_name | trim }}
-{%- else -%}
-    {{ target.database }}
-{%- endif -%}
+      - name: ads_stats
+        description: ads stats on spend, clicks and impression data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_date
