@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: fct_marketing_stats
+    description: Facebook and snapchat ads stats
+    columns:
+      - name: ads_stats_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: data_src
+        data_tests:
+          - not_null
