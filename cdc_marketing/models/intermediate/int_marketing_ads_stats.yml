@@ -6,7 +6,11 @@ version: 2
 
 models:
   - name: int_marketing_ads_stats
-    description: Facebook and snapchat ads stats
+    description: >
+      Facebook and snapchat ads stats.
+      Each row represents one ad's performance for a specific date, combining
+      Facebook Ads and Snapchat Ads data, with spend, impressions, clicks,
+      account, campaign, currency, country where available, and data source.
     columns:
       - name: ads_stats_key
         data_tests:

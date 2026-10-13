@@ -3,7 +3,11 @@
 version: 2
 models:
   - name: stg_facebook_ads
-    description: Facebook ads source for identifiers
+    description: >
+      Facebook ads source for identifiers
+      Each row represents one ad, identified by ad_id,
+      with its campaign, ad group, account, name, status,
+      and last update timestamp.
     columns:
       - name: ad_id
         data_tests:

@@ -4,7 +4,9 @@
 version: 2
 models:
   - name: stg_facebook_adgroup
-    description: Facebook ad group/set history
+    description: >
+      description: Each row represents one facebook ad group, 
+      identified by ad_group_id, with its name and last update timestamp.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

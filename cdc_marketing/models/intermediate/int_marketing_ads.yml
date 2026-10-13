@@ -2,7 +2,10 @@
 version: 2
 models:
   - name: int_marketing_ads
-    description: Facebook and snapchat ads 
+    description: >
+      Each row represents one marketing ad from Facebook Ads and Snapchat Ads,
+      with its ad group, name, status where available, last update timestamp,
+      and data source.
     columns:
       - name: ad_id
         data_tests:
