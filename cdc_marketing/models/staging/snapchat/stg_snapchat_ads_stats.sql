@@ -22,6 +22,9 @@ WITH source_data AS (
 formatted AS (
 
     SELECT
+        -- PK
+        {{ dbt_utils.generate_surrogate_key(['ad_detail_id', 'ad_date', 'ad_country']) }} AS ads_stats_key,
+
         -- FK
         CAST(ad_detail_id AS STRING) AS ad_id,
 
@@ -30,6 +33,7 @@ formatted AS (
         TRY_CAST(ad_impressions AS INTEGER) AS ad_impressions,
         TRY_CAST(ad_clicks AS INTEGER) AS ad_clicks,
         CAST(ad_country AS STRING) AS ad_country,
+        CAST(ad_currency_code AS STRING) AS ad_currency_code,
 
         -- Metadata
         CAST(ad_date AS DATE) AS ad_date,

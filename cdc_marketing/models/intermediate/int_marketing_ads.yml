@@ -1,0 +1,10 @@
+
+version: 2
+models:
+  - name: int_marketing_ads
+    description: Facebook and snapchat ads 
+    columns:
+      - name: ad_id
+        data_tests:
+          - not_null
+          - unique
