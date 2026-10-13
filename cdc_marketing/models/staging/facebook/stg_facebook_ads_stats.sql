@@ -21,6 +21,9 @@ WITH source_data AS (
 formatted AS (
 
     SELECT
+        -- PK
+        {{ dbt_utils.generate_surrogate_key(['ad_id', 'ad_date']) }} AS ads_stats_key,
+
         -- FK
         CAST(ad_id AS STRING) AS ad_id,
         CAST(account_id AS STRING) AS account_id,

@@ -15,7 +15,7 @@ formatted AS (
         -- Details
         CAST(campaign_name AS STRING) AS campaign_name,
         -- Metadata
-        CAST(account_id AS TIMESTAMP) AS account_id
+        CAST(account_id AS STRING) AS account_id
     FROM
         source_data
 )

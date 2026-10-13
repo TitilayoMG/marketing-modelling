@@ -1,0 +1,21 @@
+
+
+
+
+version: 2
+
+models:
+  - name: int_marketing_ads_stats
+    description: Facebook and snapchat ads stats
+    columns:
+      - name: ads_stats_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: data_src
+        data_tests:
+          - not_null
+          # - accepted_values:
+          #     values:
+          #       - Paid Social
