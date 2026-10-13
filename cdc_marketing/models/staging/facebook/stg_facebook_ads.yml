@@ -8,8 +8,22 @@ models:
       Each row represents one ad, identified by ad_id,
       with its campaign, ad group, account, name, status,
       and last update timestamp.
+
     columns:
       - name: ad_id
+        description: "Unique identifier of the ads."
         data_tests:
           - not_null
           - unique
+
+      - name: ad_group_id
+        description: "Identifier of the ad group the ad belongs to."
+
+      - name: ad_name
+        description: "Name of the ad."
+
+      - name: ad_status
+        description: "Current status of the ad."
+
+      - name: ad_updated_at
+        description: "Timestamp when the ad was last updated."

@@ -5,12 +5,35 @@ models:
     description: >
       Each row represents an ad's performance for a specific date,
       uniquely identified by ads_stats_key.
+
     columns:
       - name: ads_stats_key
+        description: "Surrogate key generated for the marketing ads."
         data_tests:
           - not_null
           - unique
 
       - name: data_src
+        description: "Advertising platform the record originates from."
         data_tests:
           - not_null
+
+      - name: ad_id
+        description: "Unique identifier of the marketing ad."
+        tests:
+          - not_null
+
+      - name: account_id
+        description: "Identifier of the advertising account."
+
+      - name: ad_spend
+        description: "Amount spent on the marketing ad."
+
+      - name: ad_impressions
+        description: "Number of times the marketing ad was displayed."
+
+      - name: ad_clicks
+        description: "Number of clicks on the marketing ad."
+
+      - name: ad_date
+        description: "Date the marketing ad performance was recorded."

@@ -9,16 +9,26 @@ models:
       Facebook and Snapchat ad groups.
       Each row represents one marketing ad group from Facebook Ads or Snapchat Ads,
       with its ID, name, last update timestamp, and data source.
+
     columns:
       - name: ad_group_id
+        description: "Identifier of the marketing ad group the ad belongs to."
         data_tests:
           - not_null
+
+      - name: ad_group_name
+        description: "Name of the marketing ad group the ad belong to."
+
       - name: ad_group_updated_at
+        description: "Timestamp when the marketing ad group was last updated." 
         data_tests:
           - not_null
+
       - name: data_src
+        description: "The name of the data source: either facebook or snapchat"
         data_tests:
           - not_null
+
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
