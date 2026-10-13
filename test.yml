@@ -1,44 +1,45 @@
-sources:
-  - name: facebook
-    database: bronze_production
-    description: data from  facebook plaform (static)
-    schema: cdc_staging
-    config:
-      enabled: true
-      meta:
-        owner: "@cde_engineer"
-      freshness:
-        warn_after:
-          count: 2
-          period: day
+i want to create a dimension model for ads dont know
+what to name. in intermediate model. it with ad id, groupid, ad name, ad updated at,
+ad status
 
-    tables:
-      - name: campaign
-        description: campaign data from  facebook plaform (static)
-        config:
-          enabled: true
-          event_time: campaign_updated_at
 
-      - name: adsgroup
-        description: adgroups data from  facebook plaform (static)
-        config:
-          enabled: true
-          event_time: ad_group_updated_at
+WITH facebook_ads AS (
+SELECT
+ad_id,
+ad_group_id,
+ad_name,
+ad_status,
+ad_updated_at,
+'facebook_ads' AS data_src
+FROM {{ ref('stg_facebook_ads') }}
+),
 
-      - name: ads
-        description: ads data from  facebook plaform (static)
-        config:
-          enabled: true
-          event_time: ad_updated_at
+snapchat_ads AS (
+SELECT
+ad_id,
+ad_group_id,
+ad_name,
+CAST(NULL AS STRING) AS ad_status,
+ad_updated_at,
+'snapchat_ads' AS data_src
+FROM {{ ref('stg_snapchat_ads') }}
+),
 
-      - name: account
-        description: accounts data from  facebook plaform (static)
-        config:
-          enabled: true
-          event_time: account_updated_at
+combined AS (
+SELECT * FROM facebook_ads
+UNION ALL
+SELECT * FROM snapchat_ads
+)
 
-      - name: ads_stats
-        description: ads stats on spend, clicks and impression data from  facebook plaform (static)
-        config:
-          enabled: true
-          event_time: ad_date
+SELECT * FROM combined
+
+
+version: 2
+models:
+  - name: stg_facebook_ads
+    description: Facebook ads source for identifiers
+    columns:
+      - name: ad_id
+        data_tests:
+          - not_null
+          - unique
