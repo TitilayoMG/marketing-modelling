@@ -50,7 +50,11 @@ models:
       +schema: "{{ env_var('PROD_SCHEMA') if target.name == 'production' else env_var('DEVELOPMENT_SCHEMA') if target.name == 'dev' else target.catalog }}"
 
   dbt_project_evaluator:
-    +enabled: false
+    +meta:
+      owner: "external_package"
+    +schema: _evaluator
+    # disable by default unless specifically enabled and prevent from running on production
+    +enabled: "{{ (target.name not in ['production', 'dev'] | as_bool) and (env_var('ENABLE_DBT_PROJECT_EVALUATOR', 'false') | lower == 'true' | as_bool)  }}"
 
   elementary:
     +meta:

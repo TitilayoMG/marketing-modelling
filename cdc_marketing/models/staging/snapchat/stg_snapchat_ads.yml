@@ -5,7 +5,10 @@
 version: 2
 models:
   - name: stg_snapchat_ads
-    description: campaign_id ads source for identifiers
+    description: >
+      campaign_id ads source for identifiers.
+      Each row represents snapchat one ad, identified by ad_id,
+      with its ad group, name, and last update timestamp.
     columns:
       - name: ad_id
         data_tests:

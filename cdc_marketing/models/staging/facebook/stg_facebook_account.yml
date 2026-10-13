@@ -5,7 +5,9 @@
 version: 2
 models:
   - name: stg_facebook_account
-    description: Facebook platform account model
+    description: >
+      Each row represents one facebook ads account, identified by 
+      account_id, with its name, currency, creation timestamp, and last update timestamp.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

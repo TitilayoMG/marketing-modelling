@@ -5,7 +5,11 @@ version: 2
 
 models:
   - name: stg_snapchat_ads_stats
-    description: snapchat daily stats aggregated at the ad level
+    description: >
+      snapchat daily stats aggregated at the ad level
+      Each row represents snapchat ad's performance for a specific date and country,
+      uniquely identified by ad_detail_id, ad_date, and ad_country,
+      with spend, impressions, clicks, currency code, and data source.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

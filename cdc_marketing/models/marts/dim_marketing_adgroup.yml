@@ -7,7 +7,9 @@ version: 2
 
 models:
   - name: dim_marketing_adgroup
-    description: Facebook and Snapchat ad groups
+    description: >
+      Each row represents a marketing ad group per update timestamp and data source,
+      uniquely identified by ad_group_id, ad_group_updated_at, and data_src.
     columns:
       - name: ad_group_id
         data_tests:

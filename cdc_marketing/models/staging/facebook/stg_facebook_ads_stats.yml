@@ -4,7 +4,9 @@ version: 2
 
 models:
   - name: stg_facebook_ads_stats
-    description: Facebook daily stats aggregated at the ad level
+    description: >
+      Each row represents one ad's performance for a specific date and ad_date, 
+      with spend, impressions, clicks, and associated account_id.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

@@ -3,7 +3,9 @@
 version: 2
 models:
   - name: dim_marketing_ads
-    description: Facebook and snapchat ads 
+    description: >
+      Each row represents one marketin ad, uniquely identified by ad_id,
+      with incremental updates based on ad_updated_at.
     columns:
       - name: ad_id
         data_tests:
