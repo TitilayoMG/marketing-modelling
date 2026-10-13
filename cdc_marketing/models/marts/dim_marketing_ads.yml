@@ -6,8 +6,25 @@ models:
     description: >
       Each row represents one marketin ad, uniquely identified by ad_id,
       with incremental updates based on ad_updated_at.
+
     columns:
       - name: ad_id
+        description: "Unique identifier of the ads."
         data_tests:
           - not_null
           - unique
+
+      - name: ad_group_id
+        description: "Identifier of the marketing ad group the ad belongs to."
+
+      - name: ad_name
+        description: "Name of the marketing ad."
+
+      - name: ad_status
+        description: "Current status of the marketing ad."
+
+      - name: ad_updated_at
+        description: "Timestamp when the marketing ad was last updated."
+
+      - name: data_src
+        description: "Advertising platform the record originates from."

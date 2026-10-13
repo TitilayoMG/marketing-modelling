@@ -8,8 +8,13 @@ models:
       snapchat campaign history.
       Each row represents one snapchat campaign, identified by campaign_id,
       with its name and associated account_id.
+
     columns:
       - name: campaign_id
+        description: "Unique identifier of the facebook advertising campaign."
         data_tests:
           - not_null
           - unique
+
+      - name: campaign_name
+        description: "Name of the facebook advertising campaign."

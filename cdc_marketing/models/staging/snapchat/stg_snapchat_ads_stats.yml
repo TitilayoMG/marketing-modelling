@@ -10,13 +10,40 @@ models:
       Each row represents snapchat ad's performance for a specific date and country,
       uniquely identified by ad_detail_id, ad_date, and ad_country,
       with spend, impressions, clicks, currency code, and data source.
+
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - ad_date
             - ad_id
             - ad_country
+
     columns:
       - name: ad_id
+        description: "Unique identifier of the snapchat ad."
         tests:
           - not_null
+
+      - name: ads_stats_key
+        description: "Surrogate key generated from snapchat ad_id, ad_date, and ad_country."
+
+      - name: ad_spend
+        description: "Amount spent on the snapchat ad."
+
+      - name: ad_impressions
+        description: "Number of times the snapchat ad was displayed."
+
+      - name: ad_clicks
+        description: "Number of clicks on the snapchat ad."
+
+      - name: ad_country
+        description: "Country associated with the snapchat ad performance record."
+
+      - name: ad_currency_code
+        description: "Currency code used for the snapchat ad spend."
+
+      - name: ad_date
+        description: "Date the snapchat ad performance was recorded."
+
+      - name: data_src
+        description: "Advertising platform the record originates from."

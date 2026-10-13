@@ -10,6 +10,23 @@ models:
       snapchat ad group/set history
       Each row represents one snapchat ad group, identified by _surrogate_key,
       with its campaign, name, and last update timestamp.
+
+    columns:
+      - name: _surrogate_key
+        description: "Surrogate key identifying the snapchat ad group record."
+
+      - name: ad_group_id
+        description: "Unique identifier of the snapchat advertising ad group."
+
+      - name: campaign_id
+        description: "Identifier of the campaign associated with the snapchat ad group."
+
+      - name: ad_group_name
+        description: "Name of the snapchat advertising ad group."
+
+      - name: ad_group_updated_at
+        description: "Timestamp when the snapchat ad group was last updated."
+
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

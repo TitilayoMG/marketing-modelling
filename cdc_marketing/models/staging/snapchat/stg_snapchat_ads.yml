@@ -9,8 +9,19 @@ models:
       campaign_id ads source for identifiers.
       Each row represents snapchat one ad, identified by ad_id,
       with its ad group, name, and last update timestamp.
+
     columns:
       - name: ad_id
+        description: "Unique identifier of the snapchat ad."
         data_tests:
           - not_null
           - unique
+
+      - name: ad_group_id
+        description: "Identifier of the snapchat ad group the ad belongs to."
+
+      - name: ad_name
+        description: "Name of the snapchat ad."
+
+      - name: ad_updated_at
+        description: "Timestamp when the snapchat ad was last updated."
