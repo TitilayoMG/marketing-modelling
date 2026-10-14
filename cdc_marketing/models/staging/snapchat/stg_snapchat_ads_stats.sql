@@ -21,7 +21,7 @@ WITH source_data AS (
 
 formatted AS (
 
-    SELECT
+    SELECT DISTINCT
         -- PK
         {{ dbt_utils.generate_surrogate_key(['ad_detail_id', 'ad_date', 'ad_country']) }} AS ads_stats_key,
 

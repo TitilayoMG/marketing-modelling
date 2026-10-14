@@ -9,7 +9,7 @@ WITH source_data AS (
     Transformations
 */
 formatted AS (
-    SELECT
+    SELECT DISTINCT
         -- FK
         CAST(ad_id AS STRING) AS ad_id,
         CAST(campaign_id AS STRING) AS campaign_id,
