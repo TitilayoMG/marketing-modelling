@@ -1,45 +1,7 @@
-i want to create a dimension model for ads dont know
-what to name. in intermediate model. it with ad id, groupid, ad name, ad updated at,
-ad status
-
-
-WITH facebook_ads AS (
-SELECT
-ad_id,
-ad_group_id,
-ad_name,
-ad_status,
-ad_updated_at,
-'facebook_ads' AS data_src
-FROM {{ ref('stg_facebook_ads') }}
-),
-
-snapchat_ads AS (
-SELECT
-ad_id,
-ad_group_id,
-ad_name,
-CAST(NULL AS STRING) AS ad_status,
-ad_updated_at,
-'snapchat_ads' AS data_src
-FROM {{ ref('stg_snapchat_ads') }}
-),
-
-combined AS (
-SELECT * FROM facebook_ads
-UNION ALL
-SELECT * FROM snapchat_ads
-)
-
-SELECT * FROM combined
-
-
-version: 2
-models:
-  - name: stg_facebook_ads
-    description: Facebook ads source for identifiers
-    columns:
-      - name: ad_id
-        data_tests:
-          - not_null
-          - unique
+- name: Build all dbt
+  shell: bash
+  working-directory: ${{ inputs.project-dir }}
+  env:
+    DBT_ARGS: ${{ inputs.dbt-args }}
+  run: |
+    uv run dbt build --full-refresh $DBT_ARGS

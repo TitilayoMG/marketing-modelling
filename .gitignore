@@ -17,3 +17,4 @@ logs/
 *.temp
 *.swp
 *.swo
+databricks_sql/

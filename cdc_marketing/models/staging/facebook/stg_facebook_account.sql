@@ -10,7 +10,7 @@ WITH source_data AS (
 
 formatted AS (
 
-    SELECT
+    SELECT DISTINCT
         -- FK
         CAST(account_id AS STRING) AS account_id,
 

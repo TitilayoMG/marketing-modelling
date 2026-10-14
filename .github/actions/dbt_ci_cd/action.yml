@@ -133,24 +133,25 @@ runs:
       # in normal PR ci, it only rebuild the changed part
       # and also stop/fail as soon as possible If something fails
       run: |
-        if [[ "${{ inputs.full-run }}" == "true" ]]; then
-          uv run dbt build $DBT_ARGS
-        elif [[ "$HAS_PROD_STATE" != "true" ]]; then
-          uv run dbt build --full-refresh
-        elif [[ "$DBT_TARGET" == "ci" ]]; then
-          uv run dbt build  \
-            --select state:modified+1 \
-            --defer \
-            --state target_prod \
-            --indirect-selection=buildable \
-            --fail-fast
-        else
-          uv run dbt build  \
-            --select state:modified+ \
-            --defer \
-            --state target_prod \
-            --full-refresh
-        fi
+        uv run dbt build --full-refresh $DBT_ARGS
+        # if [[ "${{ inputs.full-run }}" == "true" ]]; then
+        #   uv run dbt build $DBT_ARGS
+        # elif [[ "$HAS_PROD_STATE" != "true" ]]; then
+        #   uv run dbt build --full-refresh
+        # elif [[ "$DBT_TARGET" == "ci" ]]; then
+        #   uv run dbt build  \
+        #     --select state:modified+1 \
+        #     --defer \
+        #     --state target_prod \
+        #     --indirect-selection=buildable \
+        #     --fail-fast
+        # else
+        #   uv run dbt build  \
+        #     --select state:modified+ \
+        #     --defer \
+        #     --state target_prod \
+        #     --full-refresh
+        # fi
 
     - name: Generate dbt docs
       # this creates the dbt documentation site when target is prod

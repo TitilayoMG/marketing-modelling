@@ -14,8 +14,8 @@ models:
           - not_null
           - unique
 
-      - name: ad_group_id
-        description: "Identifier of the marketing ad group the ad belongs to."
+      # - name: ad_group_id
+      #   description: "Identifier of the marketing ad group the ad belongs to."
 
       - name: ad_name
         description: "Name of the marketing ad."
