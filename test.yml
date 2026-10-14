@@ -5,3 +5,4 @@
     DBT_ARGS: ${{ inputs.dbt-args }}
   run: |
     uv run dbt build --full-refresh $DBT_ARGS
+
