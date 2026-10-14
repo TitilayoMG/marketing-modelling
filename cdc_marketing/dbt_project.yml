@@ -31,11 +31,30 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 
 models:
-  # cdc_marketing:
-  #   +materialized: table
+
+  cdc_marketing:
+    # Config indicated by + and applies to all files under models/example/
+    staging: 
+      +materialized: view
+      +catalog: "{{ env_var('PROD_CATALOG') if target.name == 'production' else env_var('DEV_CATALOG') if target.name == 'dev' else target.catalog }}"
+      +schema: "{{ env_var('PROD_SCHEMA') if target.name == 'production' else env_var('DEVELOPMENT_SCHEMA') if target.name == 'dev' else target.catalog }}"
+
+    intermediate:
+      +materialized: table
+      +catalog: "{{ env_var('PROD_CATALOG') if target.name == 'production' else env_var('DEV_CATALOG') if target.name == 'dev' else target.catalog }}"
+      +schema: "{{ env_var('PROD_SCHEMA') if target.name == 'production' else env_var('DEVELOPMENT_SCHEMA') if target.name == 'dev' else target.catalog }}"
+
+    marts:
+      +materialized: incremental
+      +catalog: "{{ env_var('PROD_CATALOG') if target.name == 'production' else env_var('DEV_CATALOG') if target.name == 'dev' else target.catalog }}"
+      +schema: "{{ env_var('PROD_SCHEMA') if target.name == 'production' else env_var('DEVELOPMENT_SCHEMA') if target.name == 'dev' else target.catalog }}"
 
   dbt_project_evaluator:
-    +enabled: false
+    +meta:
+      owner: "external_package"
+    +schema: _evaluator
+    # disable by default unless specifically enabled and prevent from running on production
+    +enabled: "{{ (target.name not in ['production', 'dev'] | as_bool) and (env_var('ENABLE_DBT_PROJECT_EVALUATOR', 'false') | lower == 'true' | as_bool)  }}"
 
   elementary:
     +meta:

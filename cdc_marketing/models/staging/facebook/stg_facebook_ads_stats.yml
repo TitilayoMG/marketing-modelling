@@ -1,0 +1,38 @@
+
+
+version: 2
+
+models:
+  - name: stg_facebook_ads_stats
+    description: >
+      Each row represents one ad's performance for a specific date and ad_date, 
+      with spend, impressions, clicks, and associated account_id.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ad_date
+            - ad_id
+    columns:
+      - name: ad_id
+        description: "Unique identifier of the ad."
+        tests:
+          - not_null
+
+      - name: ads_stats_key
+        description: "Surrogate key generated from ad_id and ad_date."
+
+      - name: account_id
+        description: "Identifier of the advertising account."
+
+      - name: ad_spend
+        description: "Amount spent on the ad."
+
+      - name: ad_impressions
+        description: "Number of times the ad was displayed."
+
+      - name: ad_clicks
+        description: "Number of clicks on the ad."
+
+      - name: ad_date
+        description: "Date the ad performance was recorded."

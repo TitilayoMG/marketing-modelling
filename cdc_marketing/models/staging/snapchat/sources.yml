@@ -1,0 +1,39 @@
+
+
+
+
+sources:
+  - name: snapchat
+    database: raw
+    description: data from snapchat plaform (static)
+    schema: cde
+    config:
+      enabled: true
+      meta:
+        owner: "@cde_engineer"
+      freshness:
+        warn_after:
+          count: 2
+          period: day
+
+    tables:
+      - name: snapchat_campaign
+        description: campaign data from  facebook plaform (static)
+
+      - name: snapchat_adgroup
+        description: adgroups data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_group_updated_at
+
+      - name: snapchat_ads
+        description: ads data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_detail_updated_at
+
+      - name: snapchat_ads_stats
+        description: ads stats on spend, clicks and impression data from  facebook plaform (static)
+        config:
+          enabled: true
+          event_time: ad_date

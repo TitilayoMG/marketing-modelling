@@ -1,0 +1,30 @@
+
+version: 2
+models:
+  - name: int_marketing_ads
+    description: >
+      Each row represents one marketing ad from Facebook Ads and Snapchat Ads,
+      with its ad group, name, status where available, last update timestamp,
+      and data source.
+
+    columns:
+      - name: ad_id
+        description: "Unique identifier of the ads."
+        data_tests:
+          - not_null
+          - unique
+
+      - name: ad_group_id
+        description: "Identifier of the ad group the ad belongs to."
+
+      - name: ad_name
+        description: "Name of the ad."
+
+      - name: ad_status
+        description: "Current status of the ad."
+
+      - name: ad_updated_at
+        description: "Timestamp when the ad was last updated."
+
+      - name: data_src
+        description: "Advertising platform the record originates from."
