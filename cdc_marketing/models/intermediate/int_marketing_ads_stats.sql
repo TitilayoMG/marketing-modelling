@@ -16,7 +16,8 @@ WITH facebook_ads AS (
         CAST(NULL AS STRING) AS ad_country,
         fb_account.ad_currency_code,
         'facebook_ads' AS data_src,
-        ads.campaign_id
+        ads.campaign_id,
+        ads.ad_group_id
     FROM {{ ref('stg_facebook_ads_stats') }} AS ads_stats
     LEFT JOIN {{ ref('stg_facebook_account') }} AS fb_account
         ON ads_stats.account_id = fb_account.account_id
@@ -37,7 +38,8 @@ snapchat_ads AS (
         ads_stats.ad_country,
         ads_stats.ad_currency_code,
         ads_stats.data_src,
-        camp.campaign_id
+        camp.campaign_id,
+        adgroup.ad_group_id
     FROM {{ ref('stg_snapchat_ads_stats') }} AS ads_stats
     LEFT JOIN {{ ref('stg_snapchat_ads') }} AS ads
         ON ads_stats.ad_id = ads.ad_id

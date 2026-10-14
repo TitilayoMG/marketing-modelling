@@ -9,7 +9,7 @@ WITH source_data AS (
     Transformations
 */
 formatted AS (
-    SELECT
+    SELECT DISTINCT
         -- surrogate key
         CAST(_surrogate_key AS STRING) AS _surrogate_key,
         -- FK

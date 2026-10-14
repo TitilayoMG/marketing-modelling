@@ -1,7 +1,6 @@
 WITH facebook_ads AS (
-    SELECT
+    SELECT DISTINCT
         ad_id,
-        ad_group_id,
         ad_name,
         ad_status,
         ad_updated_at,
@@ -10,9 +9,8 @@ WITH facebook_ads AS (
 ),
 
 snapchat_ads AS (
-    SELECT
+    SELECT DISTINCT
         ad_id,
-        ad_group_id,
         ad_name,
         CAST(NULL AS STRING) AS ad_status,
         ad_updated_at,
